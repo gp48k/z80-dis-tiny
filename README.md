@@ -8,7 +8,7 @@ attempts at the smallest Z-80 disassembler.
 The current best is: [matt-1](src/matt-1/0887) at 887 bytes.
 
 To make the variants comperable and have at least a modicum of practicality they all have the
-same interaface and restrictions on operation.  They must:
+same interface and restrictions on operation.  They must:
 
 * Have a subroutine called `z80dis`
 * Disassemble the instruction pointed to by `HL` register.
