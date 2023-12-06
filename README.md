@@ -5,7 +5,7 @@ Started with the results of the [trs8bit newsletter](https://trs-80.org.uk/downl
 [2023 competition](http://48k.ca/comp2023.html), this repository tracks the progress of various
 attempts at the smallest Z-80 disassembler.
 
-The current best is: [peter-1](src/peter-1/1040) at 1040 bytes.
+The current best is: [matt-1](src/matt-1/1028) at 1028 bytes.
 
 To make the variants comperable and have at least a modicum of practicality they all have the
 same interaface and restrictions on operation.  They must:
