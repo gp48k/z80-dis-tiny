@@ -1,13 +1,10 @@
 
 reg_op		defb	1
 reg_disp	defb	1
-reg_dd		defb	1
-reg_s		defb	1
-reg_r		defb	1
-reg_page	defb	1
-reg_low		defb	1
 
 	include	def.inc
+	include	deftok.inc
+
 z80dis:
 	ld	BC,'H'+'L'*256+0x8000
 	ld	(reg_hl),BC
@@ -59,23 +56,6 @@ end_setup:
 ; set up some other "reg"
 	ld	a,(hl)		; get opcode
 	ld	(reg_op),a	; save opcode
-	and	a,15
-	ld	(reg_low),a
-	and	a,7
-	ld	(reg_s),a
-
-	ld	a,(hl)		; opcode
-	and	a,0xc0
-	ld	(reg_page),a	; value is page*64
-
-	ld	a,(hl)		; get opcode
-	srl	a
-	srl	a
-	srl	a
-	and	a,7
-	ld	(reg_r),a
-	srl	a
-	ld	(reg_dd),a
 
 decode_loop:
 	inc 	ix

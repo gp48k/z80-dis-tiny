@@ -1,107 +1,106 @@
 rule_00:
-	defb	cmd_lit,0x76,'H'+O,'A'+O,'L'+O,'T'+O,cmd_end_rule
-	defb	cmd_page01,cmd_s6,cmd_disp,'L'+O,'D'+O,' '+O,cmd_r,','+O,cmd_hl,cmd_end_rule
-	defb	cmd_page01,cmd_r6,cmd_disp,'L'+O,'D'+O,' '+O,cmd_hl,','+O,cmd_s,cmd_end_rule
-	defb	cmd_page01,cmd_hack_inc,'L'+O,'D'+O,' '+O,cmd_r,','+O,cmd_s,cmd_end_rule
-	defb	cmd_lit,0x36,cmd_disp,'L'+O,'D'+O,' '+O,cmd_hl,','+O,cmd_n,cmd_end_rule
-	defb	cmd_page00,cmd_s6,'L'+O,'D'+O,' '+O,cmd_r,','+O,cmd_n,cmd_end_rule
-	defb	cmd_lit,0x0A,'L'+O,'D'+O,' '+O,'A'+O,','+O,'('+O,'B'+O,'C'+O,')'+O,cmd_end_rule
-	defb	cmd_lit,0x1A,'L'+O,'D'+O,' '+O,'A'+O,','+O,'('+O,'D'+O,'E'+O,')'+O,cmd_end_rule
-	defb	cmd_lit,0x3A,'L'+O,'D'+O,' '+O,'A'+O,','+O,cmd_np,cmd_end_rule
-	defb	cmd_page00,cmd_n1,'L'+O,'D'+O,' '+O,cmd_dd,','+O,cmd_nn,cmd_end_rule
-	defb	cmd_lit,0x02,'L'+O,'D'+O,' '+O,'('+O,'B'+O,'C'+O,')'+O,','+O,'A'+O,cmd_end_rule
-	defb	cmd_lit,0x12,'L'+O,'D'+O,' '+O,'('+O,'D'+O,'E'+O,')'+O,','+O,'A'+O,cmd_end_rule
-	defb	cmd_lit,0x32,'L'+O,'D'+O,' '+O,cmd_np,','+O,'A'+O,cmd_end_rule
-	defb	cmd_lit,0x22,'L'+O,'D'+O,' '+O,cmd_np,','+O,cmd_reghl,cmd_end_rule
-	defb	cmd_lit,0x2A,'L'+O,'D'+O,' '+O,cmd_reghl,','+O,cmd_np,cmd_end_rule
-	defb	cmd_lit,0x08,'E'+O,'X'+O,' '+O,'A'+O,'F'+O,','+O,'A'+O,'F'+O,39+O,cmd_end_rule
-	defb	cmd_lit,0x34,cmd_disp,'I'+O,'N'+O,'C'+O,' '+O,cmd_hl,cmd_end_rule
-	defb	cmd_page00,cmd_s4,'I'+O,'N'+O,'C'+O,' '+O,cmd_r,cmd_end_rule
-	defb	cmd_lit,0x35,cmd_disp,'D'+O,'E'+O,'C'+O,' '+O,cmd_hl,cmd_end_rule
-	defb	cmd_page00,cmd_s5,'D'+O,'E'+O,'C'+O,' '+O,cmd_r,cmd_end_rule
-	defb	cmd_lit,0x27,'D'+O,'A'+O,'A'+O,cmd_end_rule
-	defb	cmd_lit,0x2F,'C'+O,'P'+O,'L'+O,cmd_end_rule
-	defb	cmd_lit,0x3F,'C'+O,'C'+O,'F'+O,cmd_end_rule
-	defb	cmd_lit,0x37,'S'+O,'C'+O,'F'+O,cmd_end_rule
-	defb	cmd_lit,0x00,'N'+O,'O'+O,'P'+O,cmd_end_rule
-	defb	cmd_page00,cmd_n9,'A'+O,'D'+O,'D'+O,' '+O,cmd_reghl,','+O,cmd_dd,cmd_end_rule
-	defb	cmd_lit,0x07,'R'+O,'L'+O,'C'+O,'A'+O,cmd_end_rule
-	defb	cmd_lit,0x17,'R'+O,'L'+O,'A'+O,cmd_end_rule
-	defb	cmd_lit,0x0F,'R'+O,'R'+O,'C'+O,'A'+O,cmd_end_rule
-	defb	cmd_lit,0x1F,'R'+O,'R'+O,'A'+O,cmd_end_rule
-	defb	cmd_page00,cmd_n3,'I'+O,'N'+O,'C'+O,' '+O,cmd_dd,cmd_end_rule
-	defb	cmd_page00,cmd_nB,'D'+O,'E'+O,'C'+O,' '+O,cmd_dd,cmd_end_rule
-	defb	cmd_lit,0x18,'J'+O,'R'+O,' '+O,cmd_e,cmd_end_rule
-	defb	cmd_rc,','+O,cmd_e,cmd_end_rule
-	defb	cmd_lit,0x10,'D'+O,'J'+O,'N'+O,'Z'+O,' '+O,cmd_e,cmd_end_rule
+	defb	cmd_lit,0x76,_H,_A,_L,_T,cmd_end_rule
+	defb	cmd_page01,cmd_s6,cmd_disp,_lds,cmd_r,__c,cmd_hl,cmd_end_rule
+	defb	cmd_page01,cmd_r6,cmd_disp,_lds,cmd_hl,__c,cmd_s,cmd_end_rule
+	defb	cmd_page01,cmd_hack_inc,_lds,cmd_r,__c,cmd_s,cmd_end_rule
+	defb	cmd_lit,0x36,cmd_disp,_lds,cmd_hl,__c,cmd_n,cmd_end_rule
+	defb	cmd_page00,cmd_s6,_lds,cmd_r,__c,cmd_n,cmd_end_rule
+	defb	cmd_lit,0x2A,_lds,cmd_reghl,__c,cmd_np,cmd_end_rule
+	defb	cmd_lit,0x3A,_lds,_Ac,cmd_np,cmd_end_rule
+	defb	cmd_page00,cmd_nA,_lds,_Ac,__p,cmd_dd,__q,cmd_end_rule
+	defb	cmd_page00,cmd_n1,_lds,cmd_dd,__c,cmd_nn,cmd_end_rule
+
+	defb	cmd_lit,0x22,_lds,cmd_np,__c,cmd_reghl,cmd_end_rule
+	defb	cmd_lit,0x32,_lds,cmd_np,_cA,cmd_end_rule
+	defb	cmd_page00,cmd_n2,_lds,__p,cmd_dd,__q,_cA,cmd_end_rule
+
+	defb	cmd_lit,0x08,_exs,_af,__c,_af,__a,cmd_end_rule
+	defb	cmd_lit,0x34,cmd_disp,_incs,cmd_hl,cmd_end_rule
+	defb	cmd_page00,cmd_s4,_incs,cmd_r,cmd_end_rule
+	defb	cmd_lit,0x35,cmd_disp,_decs,cmd_hl,cmd_end_rule
+	defb	cmd_page00,cmd_s5,_decs,cmd_r,cmd_end_rule
+	defb	cmd_lit,0x00,_N,_O,_P,cmd_end_rule
+	defb	cmd_page00,cmd_n9,_A,_D,_D,__s,cmd_reghl,__c,cmd_dd,cmd_end_rule
+
+	defb	cmd_lit,0x27,_D,_A,_A,cmd_end_rule
+	defb	cmd_lit,0x2F,_cp,_L,cmd_end_rule
+	defb	cmd_lit,0x37,_S,_C,_F,cmd_end_rule
+	defb	cmd_lit,0x3F,_C,_C,_F,cmd_end_rule
+
+	defb	cmd_page00,cmd_s7,cmd_cbs,_A,cmd_end_rule
+
+	defb	cmd_page00,cmd_n3,_incs,cmd_dd,cmd_end_rule
+	defb	cmd_page00,cmd_nB,_decs,cmd_dd,cmd_end_rule
+	defb	cmd_lit,0x18,_jrs,cmd_e,cmd_end_rule
+	defb	cmd_jr,_jrs,cmd_rc,__c,cmd_e,cmd_end_rule
+	defb	cmd_lit,0x10,_D,_J,_nz,__s,cmd_e,cmd_end_rule
 	defb	cmd_page10,cmd_s6,cmd_alu,cmd_disp,cmd_hl,cmd_end_rule
 	defb	cmd_page10,cmd_hack_inc,cmd_alu,cmd_s,cmd_end_rule
 	defb	cmd_page11,cmd_s6,cmd_alu,cmd_n,cmd_end_rule
-	defb	cmd_lit,0xF9,'L'+O,'D'+O,' '+O,'S'+O,'P'+O,','+O,cmd_reghl,cmd_end_rule
-	defb	cmd_lit,0xE5,'P'+O,'U'+O,'S'+O,'H'+O,' '+O,cmd_reghl,cmd_end_rule
-	defb	cmd_page11,cmd_n5,'P'+O,'U'+O,'S'+O,'H'+O,' '+O,cmd_qq,cmd_end_rule
-	defb	cmd_lit,0xE1,'P'+O,'O'+O,'P'+O,' '+O,cmd_reghl,cmd_end_rule
-	defb	cmd_page11,cmd_n1,'P'+O,'O'+O,'P'+O,' '+O,cmd_qq,cmd_end_rule
-	defb	cmd_lit,0xEB,'E'+O,'X'+O,' '+O,'D'+O,'E'+O,','+O,'H'+O,'L'+O,cmd_end_rule
-	defb	cmd_lit,0x08,'E'+O,'X'+O,' '+O,'A'+O,'F'+O,','+O,'A'+O,'F'+O,39+O,cmd_end_rule
-	defb	cmd_lit,0xD9,'E'+O,'X'+O,'X'+O,cmd_end_rule
-	defb	cmd_lit,0xE3,'E'+O,'X'+O,' '+O,'('+O,'S'+O,'P'+O,')'+O,','+O,cmd_reghl,cmd_end_rule
-	defb	cmd_lit,0xF3,'D'+O,'I'+O,cmd_end_rule
-	defb	cmd_lit,0xFB,'E'+O,'I'+O,cmd_end_rule
-	defb	cmd_lit,0xC3,'J'+O,'P'+O,' '+O,cmd_nn,cmd_end_rule
-	defb	cmd_page11,cmd_s2,'J'+O,'P'+O,' '+O,cmd_cc,','+O,cmd_nn,cmd_end_rule
-	defb	cmd_lit,0xE9,'J'+O,'P'+O,' '+O,'('+O,cmd_reghl,')'+O,cmd_end_rule
-	defb	cmd_lit,0xCD,'C'+O,'A'+O,'L'+O,'L'+O,' '+O,cmd_nn,cmd_end_rule
-	defb	cmd_page11,cmd_s4,'C'+O,'A'+O,'L'+O,'L'+O,' '+O,cmd_cc,','+O,cmd_nn,cmd_end_rule
-	defb	cmd_lit,0xC9,'R'+O,'E'+O,'T'+O,cmd_end_rule
-	defb	cmd_page11,cmd_s0,'R'+O,'E'+O,'T'+O,' '+O,cmd_cc,cmd_end_rule
-	defb	cmd_page11,cmd_s7,'R'+O,'S'+O,'T'+O,' '+O,cmd_rst,cmd_end_rule
-	defb	cmd_lit,0xDB,'I'+O,'N'+O,' '+O,'A'+O,','+O,'('+O,cmd_n,')'+O,cmd_end_rule
-	defb	cmd_lit,0xD3,'O'+O,'U'+O,'T'+O,' '+O,'('+O,cmd_n,')'+O,','+O,'A'+O,cmd_end_rule
+	defb	cmd_lit,0xF9,_lds,_sp,__c,cmd_reghl,cmd_end_rule
+	defb	cmd_lit,0xE5,_pushs,cmd_reghl,cmd_end_rule
+	defb	cmd_page11,cmd_n5,_pushs,cmd_qq,cmd_end_rule
+	defb	cmd_lit,0xE1,_pops,cmd_reghl,cmd_end_rule
+	defb	cmd_page11,cmd_n1,_pops,cmd_qq,cmd_end_rule
+	defb	cmd_lit,0xEB,_exs,_de,__c,_hl,cmd_end_rule
+	defb	cmd_lit,0xD9,_E,_X,_X,cmd_end_rule
+	defb	cmd_lit,0xE3,_exs,__p,_sp,__q,__c,cmd_reghl,cmd_end_rule
+	defb	cmd_lit,0xF3,_D,_I,cmd_end_rule
+	defb	cmd_lit,0xFB,_E,_I,cmd_end_rule
+	defb	cmd_lit,0xC3,_jps,cmd_nn,cmd_end_rule
+	defb	cmd_page11,cmd_s2,_jps,cmd_cc,__c,cmd_nn,cmd_end_rule
+	defb	cmd_lit,0xE9,_jps,__p,cmd_reghl,__q,cmd_end_rule
+	defb	cmd_lit,0xCD,_calls,cmd_nn,cmd_end_rule
+	defb	cmd_page11,cmd_s4,_calls,cmd_cc,__c,cmd_nn,cmd_end_rule
+	defb	cmd_lit,0xC9,_ret,cmd_end_rule
+	defb	cmd_page11,cmd_s0,_ret,__s,cmd_cc,cmd_end_rule
+	defb	cmd_page11,cmd_s7,_R,_S,_T,__s,cmd_rst,cmd_end_rule
+	defb	cmd_lit,0xDB,_in,__s,_Ac,__p,cmd_n,__q,cmd_end_rule
+	defb	cmd_lit,0xD3,_out,__s,__p,cmd_n,__q,_cA,cmd_end_rule
 	defb	cmd_end_table
 rule_ed:
-	defb	cmd_lit,0x57,'L'+O,'D'+O,' '+O,'A'+O,','+O,'I'+O,cmd_end_rule
-	defb	cmd_lit,0x5F,'L'+O,'D'+O,' '+O,'A'+O,','+O,'R'+O,cmd_end_rule
-	defb	cmd_lit,0x47,'L'+O,'D'+O,' '+O,'I'+O,','+O,'A'+O,cmd_end_rule
-	defb	cmd_lit,0x4F,'L'+O,'D'+O,' '+O,'R'+O,','+O,'A'+O,cmd_end_rule
-	defb	cmd_page01,cmd_nB,'L'+O,'D'+O,' '+O,cmd_dd,','+O,'('+O,cmd_nn,')'+O,cmd_end_rule
-	defb	cmd_page01,cmd_n3,'L'+O,'D'+O,' '+O,'('+O,cmd_nn,')'+O,','+O,cmd_dd,cmd_end_rule
-	defb	cmd_lit,0xA0,'L'+O,'D'+O,'I'+O,cmd_end_rule
-	defb	cmd_lit,0xB0,'L'+O,'D'+O,'I'+O,'R'+O,cmd_end_rule
-	defb	cmd_lit,0xA8,'L'+O,'D'+O,'D'+O,cmd_end_rule
-	defb	cmd_lit,0xB8,'L'+O,'D'+O,'D'+O,'R'+O,cmd_end_rule
-	defb	cmd_lit,0xA1,'C'+O,'P'+O,'I'+O,cmd_end_rule
-	defb	cmd_lit,0xB1,'C'+O,'P'+O,'I'+O,'R'+O,cmd_end_rule
-	defb	cmd_lit,0xA9,'C'+O,'P'+O,'D'+O,cmd_end_rule
-	defb	cmd_lit,0xB9,'C'+O,'P'+O,'D'+O,'R'+O,cmd_end_rule
-	defb	cmd_lit,0x44,'N'+O,'E'+O,'G'+O,cmd_end_rule
-	defb	cmd_lit,0x46,'I'+O,'M'+O,' '+O,'0'+O,cmd_end_rule
-	defb	cmd_lit,0x56,'I'+O,'M'+O,' '+O,'1'+O,cmd_end_rule
-	defb	cmd_lit,0x5E,'I'+O,'M'+O,' '+O,'2'+O,cmd_end_rule
-	defb	cmd_page01,cmd_nA,'A'+O,'D'+O,'C'+O,' '+O,'H'+O,'L'+O,','+O,cmd_dd,cmd_end_rule
-	defb	cmd_page01,cmd_n2,'S'+O,'B'+O,'C'+O,' '+O,'H'+O,'L'+O,','+O,cmd_dd,cmd_end_rule
-	defb	cmd_page01,cmd_s0,'I'+O,'N'+O,' '+O,cmd_r,','+O,'('+O,'C'+O,')'+O,cmd_end_rule
-	defb	cmd_lit,0xA2,'I'+O,'N'+O,'I'+O,cmd_end_rule
-	defb	cmd_lit,0xB2,'I'+O,'N'+O,'I'+O,'R'+O,cmd_end_rule
-	defb	cmd_lit,0xAA,'I'+O,'N'+O,'D'+O,cmd_end_rule
-	defb	cmd_lit,0xBA,'I'+O,'N'+O,'D'+O,'R'+O,cmd_end_rule
-	defb	cmd_page01,cmd_s1,'O'+O,'U'+O,'T'+O,' '+O,'('+O,'C'+O,')'+O,','+O,cmd_r,cmd_end_rule
-	defb	cmd_lit,0xA3,'O'+O,'U'+O,'T'+O,'I'+O,cmd_end_rule
-	defb	cmd_lit,0xB3,'O'+O,'T'+O,'I'+O,'R'+O,cmd_end_rule
-	defb	cmd_lit,0xAB,'O'+O,'U'+O,'T'+O,'D'+O,cmd_end_rule
-	defb	cmd_lit,0xBB,'O'+O,'T'+O,'D'+O,'R'+O,cmd_end_rule
-	defb	cmd_lit,0x4D,'R'+O,'E'+O,'T'+O,'I'+O,cmd_end_rule
-	defb	cmd_lit,0x45,'R'+O,'E'+O,'T'+O,'N'+O,cmd_end_rule
-	defb	cmd_lit,0x67,'R'+O,'R'+O,'D'+O,cmd_end_rule
-	defb	cmd_lit,0x6F,'R'+O,'L'+O,'D'+O,cmd_end_rule
+	defb	cmd_lit,0x57,_lds,_Ac,_I,cmd_end_rule
+	defb	cmd_lit,0x5F,_lds,_Ac,_R,cmd_end_rule
+	defb	cmd_lit,0x47,_lds,_I,_cA,cmd_end_rule
+	defb	cmd_lit,0x4F,_lds,_R,_cA,cmd_end_rule
+	defb	cmd_page01,cmd_nB,_lds,cmd_dd,__c,__p,cmd_nn,__q,cmd_end_rule
+	defb	cmd_page01,cmd_n3,_lds,__p,cmd_nn,__q,__c,cmd_dd,cmd_end_rule
+	defb	cmd_lit,0xA0,_ld,_I,cmd_end_rule
+	defb	cmd_lit,0xB0,_ld,_ir,cmd_end_rule
+	defb	cmd_lit,0xA8,_ld,_D,cmd_end_rule
+	defb	cmd_lit,0xB8,_ld,_dr,cmd_end_rule
+	defb	cmd_lit,0xA1,_cp,_I,cmd_end_rule
+	defb	cmd_lit,0xB1,_cp,_ir,cmd_end_rule
+	defb	cmd_lit,0xA9,_cp,_D,cmd_end_rule
+	defb	cmd_lit,0xB9,_cp,_dr,cmd_end_rule
+	defb	cmd_lit,0x44,_N,_E,_G,cmd_end_rule
+	defb	cmd_lit,0x46,_ims,_0,cmd_end_rule
+	defb	cmd_lit,0x56,_ims,_1,cmd_end_rule
+	defb	cmd_lit,0x5E,_ims,_2,cmd_end_rule
+	defb	cmd_page01,cmd_nA,_A,_D,_C,__s,_hl,__c,cmd_dd,cmd_end_rule
+	defb	cmd_page01,cmd_n2,_S,_bc,__s,_hl,__c,cmd_dd,cmd_end_rule
+	defb	cmd_page01,cmd_s0,_in,__s,cmd_r,__c,__p,_C,__q,cmd_end_rule
+	defb	cmd_lit,0xA2,_in,_I,cmd_end_rule
+	defb	cmd_lit,0xB2,_in,_ir,cmd_end_rule
+	defb	cmd_lit,0xAA,_in,_D,cmd_end_rule
+	defb	cmd_lit,0xBA,_in,_dr,cmd_end_rule
+	defb	cmd_page01,cmd_s1,_out,__s,__p,_C,__q,__c,cmd_r,cmd_end_rule
+	defb	cmd_lit,0xA3,_out,_I,cmd_end_rule
+	defb	cmd_lit,0xB3,_O,_T,_ir,cmd_end_rule
+	defb	cmd_lit,0xAB,_out,_D,cmd_end_rule
+	defb	cmd_lit,0xBB,_O,_T,_dr,cmd_end_rule
+	defb	cmd_lit,0x4D,_ret,_I,cmd_end_rule
+	defb	cmd_lit,0x45,_ret,_N,cmd_end_rule
+	defb	cmd_lit,0x67,_rr,_D,cmd_end_rule
+	defb	cmd_lit,0x6F,_R,_ld,cmd_end_rule
 	defb	cmd_end_table
 rule_cb:
-	defb	cmd_page00,cmd_s6,cmd_cbs,' '+O,cmd_hl,cmd_end_rule
-	defb	cmd_page00,cmd_hack_inc,cmd_cbs,' '+O,cmd_s,cmd_end_rule
-	defb	cmd_page01,cmd_s6,'B'+O,'I'+O,'T'+O,' '+O,cmd_b,','+O,cmd_hl,cmd_end_rule
-	defb	cmd_page01,cmd_hack_inc,'B'+O,'I'+O,'T'+O,' '+O,cmd_b,','+O,cmd_s,cmd_end_rule
-	defb	cmd_page10,cmd_s6,'R'+O,'E'+O,'S'+O,' '+O,cmd_b,','+O,cmd_hl,cmd_end_rule
-	defb	cmd_page10,cmd_hack_inc,'R'+O,'E'+O,'S'+O,' '+O,cmd_b,','+O,cmd_s,cmd_end_rule
-	defb	cmd_page11,cmd_s6,'S'+O,'E'+O,'T'+O,' '+O,cmd_b,','+O,cmd_hl,cmd_end_rule
-	defb	cmd_page11,cmd_hack_inc,'S'+O,'E'+O,'T'+O,' '+O,cmd_b,','+O,cmd_s,cmd_end_rule
+	defb	cmd_page00,cmd_s6,cmd_cbs,__s,cmd_hl,cmd_end_rule
+	defb	cmd_page00,cmd_hack_inc,cmd_cbs,__s,cmd_s,cmd_end_rule
+	defb	cmd_page01,cmd_s6,_bit,cmd_b,__c,cmd_hl,cmd_end_rule
+	defb	cmd_page01,cmd_hack_inc,_bit,cmd_b,__c,cmd_s,cmd_end_rule
+	defb	cmd_page10,cmd_s6,_res,cmd_b,__c,cmd_hl,cmd_end_rule
+	defb	cmd_page10,cmd_hack_inc,_res,cmd_b,__c,cmd_s,cmd_end_rule
+	defb	cmd_page11,cmd_s6,_set,cmd_b,__c,cmd_hl,cmd_end_rule
+	defb	cmd_page11,cmd_hack_inc,_set,cmd_b,__c,cmd_s,cmd_end_rule
 	defb	cmd_end_table

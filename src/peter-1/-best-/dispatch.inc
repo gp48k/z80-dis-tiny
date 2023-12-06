@@ -1,57 +1,29 @@
 ; Dispatch routines have to return with "C"
 ; set 7,c for match failed
+
+; table offsets
+;alu_tab_off	equ	0
+cbs_tab_off	equ	8
+cc_tab_off	equ	16
+ddss_tab_off	equ	24
+reg_hl_off	equ	ddss_tab_off+2
+qq_tab_off	equ	28
+reg_tab_off	equ	32
+
+
 dispatch:
 	djnz	skip_1
 	jr	end_rule
 ; end_rule / end_table both terminate 
 ; <cmd_end_rule>
 skip_1:
-	djnz	skip_2
+	djnz	skip_7
 ; <cmd_end_table>
 end_rule:
-	ld	a,0
+	xor	a
 	ld	(de),a
 	pop	bc		; skip return
 	ret
-skip_2:
-	djnz	skip_3
-; <cmd_alu>
-; $alu[ ($code[$i] >> 3) & 7];
-; @alu = ( 'ADD A,', 'ADC A,', 'SUB ', 'SBC A,', 'AND ', 'XOR ', 'OR ', 'CP ' );
-	ld	a,(reg_r)
-	ld	iy,alu_tab
-	jp	tab_out
-
-skip_3:
-	djnz	skip_4
-; <cmd_b>
-	ld	a,(reg_r)
-	add	a,'0'
-	ld	(de),a
-	inc	de
-	ret
-
-skip_4:
-	djnz	skip_5
-; <cmd_cbs>
-	ld	a,(reg_r)
-	ld	iy,cbs_tab
-	jp	tab_out
-
-skip_5:
-	djnz	skip_6
-; <cmd_cc>
-	ld	a,(reg_r)
-	ld	iy,cc_tab
-	jp	tab_out
-
-skip_6:
-	djnz	skip_7
-; <cmd_dd>
-;	$ddss[$dd_reg];
-	ld	iy,ddss_tab
-	ld	a,(reg_dd)
-	jp	tab_out
 
 skip_7:
 	djnz	skip_8
@@ -64,9 +36,6 @@ skip_7:
 skip_8:
 	djnz	skip_9
 ; <cmd_e>
-; $rel = $code[$i];
-; if ($rel >= 0x80) { $rel -= 256; }
-; $disasm .= sprintf '$%04X', ($addr + $i + 1 + $rel) & 0xffff;
 	ld	a,(hl)		; branch offset
 	inc	hl
 	push	hl
@@ -89,12 +58,11 @@ skip_9:
 	djnz	skip_10
 ; <cmd_hl>
 	; (HL) or IX+- DISP stuff
-	push	hl			; TODO: push seems unnecessary
 	ld	a,'('
 	ld	(de),a
 	inc	de
-	ld	iy,reg_hl
-	call	tab_out_entry
+	ld	a,reg_hl_off
+	call	str_tab_out
 	bit	0,c
 	jr	z,HL_only
 	; +- reg_disp
@@ -115,14 +83,20 @@ HL_only:
 	ld	a,')'
 	ld	(de),a
 	inc	de
-	pop	hl
 	ret
+
 skip_10:
-	djnz	skip_11
+	ld	a,(reg_op)
+	djnz	skip_10a
+; <cmd_rst>
+	and	a,0x38
+	jp	dollar_hex
+
+skip_10a:
+	djnz	skip_39a
 ; <cmd_lit>
 	ld	b,(ix+1)
 	inc	ix
-	ld	a,(reg_op)
 	cp	a,b
 	jr	z,lit_match
 	set	7,c;no match
@@ -131,62 +105,107 @@ lit_match:
 	inc	hl
 	ret
 
+skip_39a:
+	djnz	skip_39
+; <cmd_s>
+	and	a,7		;reg_s
+	jp	reg_tab_out
+
+skip_39:
+	djnz	skip_40
+; <cmd_hack_inc>
+hack_inc:
+	inc	hl
+	ret
+
+skip_40:
+; <cmd_jr>
+	djnz	skip_21
+	and	a,~0x18
+	cp	0x20
+	jr	z,hack_inc
+	set	7,c;no match
+	ret
+
+; TODO -- we can get rid of some dec b/inc a for the 'comparisons' here.
+; (seems like the 'dispatch' here could be optimized a bit, e.g. multiple subs)
+skip_21:
+	; handle pageXX commands
+	push	af
+	ld	a,b
+	sub	5		; range 0..3 so N+2
+	jr	nc,skip_11	; B was 5 or larger
+	dec	b		; B was 1..4 now 0..3
+	pop	af		; get back reg_op
+	rlca			; shift 2 high bits to low
+	rlca
+	and	3		; and mask them
+	cp	a,b		; compare
+	jp	byte_match	; go to advance
+
+; <cmd_page00>
+; <cmd_page01>
+; <cmd_page10>
+; <cmd_page11>
+
 skip_11:
-	djnz	skip_12
+	inc	a
+	ld	b,a
+
+	sub	9
+	jp	c,special_cmp_s
+	inc	a
+	ld	b,a
+; <cmd_s0>
+
+; <cmd_s1>
+
+; <cmd_s2>
+
+; <cmd_s3>
+
+; <cmd_s4>
+
+; <cmd_s5>
+
+; <cmd_s6>
+
+; <cmd_s7>
+
+	sub	0xD		; only n0 .. nB used
+	jp	c,special_cmp_n
+	inc	a
+	ld	b,a
+	pop	af		; reg_op (used by reg_r)
+; <cmd_n0>
 ; <cmd_n1>
-	ld	a,(reg_low)
-	cp	1
-	jp	byte_match_advance
-
-skip_12:
-	djnz	skip_13
 ; <cmd_n2>
-	ld	a,(reg_low)
-	cp	2
-	jp	byte_match_advance
-
-skip_13:
-	djnz	skip_14
 ; <cmd_n3>
-	ld	a,(reg_low)
-	cp	3
-	jp	byte_match_advance
-
-skip_14:
-	djnz	skip_15
+; <cmd_n4>
 ; <cmd_n5>
-	ld	a,(reg_low)
-	cp	5
-	jp	byte_match_advance
-
-skip_15:
-	djnz	skip_16
+; <cmd_n6>
+; <cmd_n7>
+; <cmd_n8>
 ; <cmd_n9>
-	ld	a,(reg_low)
-	cp	9
-	jp	byte_match_advance
+; <cmd_nA>
+; <cmd_nB>
 
-skip_16:
-	djnz	skip_17
+	rra
+	rra
+	rra
+	and	a,7		; reg_r
+	djnz	skip_19a
+; <cmd_rc>
+	and	a,3		; only two bits valid
+	add	a,cc_tab_off
+	jr	str_tab_out
+
+skip_19a:
+	djnz	skip_19
 ; <cmd_n>
 	ld	a,(hl)
 	inc	hl
-	call	dollar_hex
-	ret
-
-skip_17:
-	djnz	skip_18
-; <cmd_nA>
-	ld	a,(reg_low)
-	cp	0xa
-	jp	byte_match_advance
-
-skip_18:
-	djnz	skip_19
-; <cmd_nB>
-	ld	a,(reg_low)
-	cp	0xb
-	jp	byte_match_advance
+	jp	dollar_hex
 
 skip_19:
 	djnz	skip_20
@@ -199,11 +218,10 @@ cmd_nn_impl:
 	ld	a,(hl)
 	inc	hl
 	inc	hl
-	call	hex2
-	ret
+	jp	hex2
 
 skip_20:
-	djnz	skip_21
+	djnz	skip_3
 ; <cmd_np>
 	ld	a,'('
 	ld	(de),a
@@ -211,234 +229,130 @@ skip_20:
 
 	call	cmd_nn_impl
 
-	ld	a,')'
+	jp	HL_only
+
+skip_3:
+	djnz	skip_4
+; <cmd_b>
+	add	a,'0'
 	ld	(de),a
 	inc	de
 	ret
 
-skip_21:
-	djnz	skip_22
-; <cmd_page00>
-; TODO: can "ld a,(reg_page)" before these, if we'd like
-; but that means re-arranging the opcodes
-; or re-loading A after, if necessary
-cmd_page00_impl
-	ld	a,(reg_page)
-	cp	a,0*64		; TODO "or a"?
-	jp	byte_match
+skip_4:
+	djnz	skip_5
+; <cmd_cbs>
+	add	a,cbs_tab_off
+	jp	str_tab_out
 
-skip_22:
-	djnz	skip_23
-; <cmd_page01>
-	ld	a,(reg_page)
-	cp	a,1*64
-	jp	byte_match
+skip_5:
+	djnz	skip_27a
+; <cmd_cc>
+	add	a,cc_tab_off
+	jp	str_tab_out
 
-skip_23:
-	djnz	skip_24
-; <cmd_page10>
-	ld	a,(reg_page)
-	cp	a,2*64
-	jp	byte_match
 
-skip_24:
-	djnz	skip_25
-; <cmd_page11>
-	ld	a,(reg_page)
-	cp	a,3*64
-	jp	byte_match
+skip_27a:
+	djnz	skip_27b
+; <cmd_alu>
+	;add	a,alu_tab_off
+	jp	str_tab_out
 
-skip_25:
-	djnz	skip_26
-; <cmd_qq>
-	ld	iy,qq_tab
-	ld	a,(reg_dd)
-	jp	tab_out
-
-skip_26:
+skip_27b:
 	djnz	skip_27
 ; <cmd_r6>
-	ld	a,(reg_r)
 	cp	6
 	jp	byte_match_advance
 
 skip_27:
-	djnz	skip_28
+	djnz	skip_25
 ; <cmd_r>
-; $reg[$r_reg];
-	ld	a,(reg_r)
 reg_tab_out:
-	ld	iy,reg_tab	
-	ld	(mod_r+2),a
-mod_r	ld	a,(iy+0)	; self-modify
-	ld	(de),a	
-	inc	de
-	ret
+	add	a,reg_tab_off
+	jp	str_tab_out
 
-skip_28:
+skip_25:
+; reg_dd is a shift of reg_r
+	rra
+	djnz	skip_6
+; <cmd_qq>
+	add	a,qq_tab_off
+	jp	str_tab_out
+
+skip_6:
 	djnz	skip_29
-; <cmd_rc>
-;if (($code[$i] & ~0x18) != 0x20) { return 0; }
-;	$disasm .= "JR " . $cc_r[ ($code[$i] >> 3) & 3 ];
-	ld	a,(reg_op)
-	and	a,~0x18
-	cp	0x20
-	jr	z,cmd_rc_match
-	set	7,c;no match
-	ret
-cmd_rc_match:
-	inc	hl
-	ld	a,'J'
-	ld	(de),a
-	inc	de
-	ld	a,'R'
-	ld	(de),a
-	inc	de
-	ld	a,' '
-	ld	(de),a
-	inc	de
-	ld	a,(reg_r)
-	and	a,3		; only two bits valid
-	ld	iy,cc_tab
-	jp	tab_out
+; <cmd_dd>
+	add	a,ddss_tab_off
+	jp	str_tab_out
 
 skip_29:
-	djnz	skip_30
-; <cmd_reghl>
-	ld	iy,reg_hl
-	jp	tab_out_entry
-
-skip_30:
 	djnz	skip_31
-; <cmd_rst>
-	ld	a,(reg_op)
-	and	a,0x38
-	call	dollar_hex
-	ret
+; <cmd_reghl>
+	ld	a,reg_hl_off
+	jp	str_tab_out
 
 skip_31:
-	ld	a,b
-	cp	2
-	ld	a,(reg_s)
-	jr	z,cmd_s1_impl
-	djnz	skip_32
-; <cmd_s0>
-	cp	0		; TODO: "or a" shorter?
-	jp	byte_match_advance
 
-skip_32:
-	djnz	skip_33
-; <cmd_s1>
-cmd_s1_impl:
-	cp	1
-	jp	byte_match_advance
-
-skip_33:
-	djnz	skip_33a
-; <cmd_s2>
-	cp	2
-	jp	byte_match_advance
-
-skip_33a:
-	djnz	skip_34
-; <cmd_s3>
-	cp	3
-	jp	byte_match_advance
-
-skip_34:
-	djnz	skip_35
-; <cmd_s4>
-	cp	4
-	jp	byte_match_advance
-
-skip_35:
-	djnz	skip_36
-; <cmd_s5>
-	cp	5
-	jp	byte_match_advance
-
-skip_36:
-	djnz	skip_37
-; <cmd_s6>
-	cp	6
-	jp	byte_match_advance
-
-skip_37:
-	djnz	skip_38
-; <cmd_s7>
-	cp	7
-	jp	byte_match_advance
-
-skip_38:
-	djnz	skip_39
-; <cmd_s>
-	ld	a,(reg_s)
-	jp	reg_tab_out
-
-skip_39:
-	djnz	skip_40
-; <cmd_hack_inc>
-	inc	hl
-	ret
-
-skip_40:
 	; literal output byte
 	ld	a,b
+	cp	_first
+	jr	nc,token
 	ld	(de),a
 	inc	de
 	ret
+token:
+	sub	a,_first	; magic offset between 'Z' last literal and end of 40-entry strtab
 
-alu_tab:
-	defb 'ADD A',','+0x80, 'ADC A',','+0x80, 'SUB',' '+0x80, 'SBC A',','+0x80, 'AND',' '+0x80, 'XOR',' '+0x80, 'OR',' '+0x80, 'CP',' '+0x80
-cbs_tab:
-	defb	'RL','C'+0x80, 'RR','C'+0x80, 'R','L'+0x80, 'R','R'+0x80, 'SL','A'+0x80, 'SR','A'+0x80, '?'+0x80, 'SR','L'+0x80
-cc_tab:
-	defb	'N','Z'+0x80, 'Z'+0x80, 'N','C'+0x80, 'C'+0x80, 'N','V'+0x80, 'V'+0x80, 'P'+0x80, 'M'+0x80
-ddss_tab
-	defb	'B','C'+0x80, 'D','E'+0x80
-reg_hl	defb	'H','L'+0x80, 'S','P'+0x80
-qq_tab	defb	'B','C'+0x80, 'D','E'+0x80, 'H','L'+0x80, 'A','F'+0x80
-
-reg_tab
-	defb	'BCDEHL?A'
-
-
-tab_out:
+str_tab_out:
+	push	hl
+	ld	hl,str_tab
 	ld	b,a
 	or	a
-	jr	nz,skip_tab
+	jr	z,tab_out_entry
+
+skip_tab:
+	ld	a,(hl)
+	inc	hl
+	or	a
+	jp	p,skip_tab
+	djnz	skip_tab
+
 	; output entry
 tab_out_entry
-	ld	a,(iy+0)
+	ld	a,(hl)
 	push	af
 	and	a,0x7f
 	ld	(de),a
 	inc	de
-	inc	iy
+	inc	hl
 	pop	af
 	or	a
+	jp	p,tab_out_entry
+	pop	hl
 	ret	m
-	jr	tab_out_entry
-skip_tab:
-	ld	a,(iy+0)
-	inc	iy
-	or	a
-	jp	p,skip_tab
-	djnz	skip_tab
-	jr	tab_out_entry
 
 byte_match:
 	ret	z
 	set	7,c;no match
 	ret
+
+special_cmp_n
+	dec	b
+	pop	af		;reg_op back
+	and	a,15		;reg_low
+	jr	special_cmp
+
+special_cmp_s
+	dec	b
+	pop	af		;reg_op back
+	and	a,7
+special_cmp:
+	cp	a,b	
+
 byte_match_advance:
 	jr	nz,byte_match
 	inc	hl
 	jr	byte_match
-
-; TODO bad "push af" here
-hex2:	push	af
-	jr	hex_int
 
 dollar_hex:
 	push	af
@@ -446,6 +360,7 @@ dollar_hex:
 	ld	(de),a
 	inc	de
 	pop	af
+hex2:
 	push	af
 hex_int:
 	rra
@@ -462,4 +377,41 @@ hexone:	and	$f
 isdigit:	ld	(de),a
 	inc	de
 	ret
+
+
+str_tab:
+	defb 'ADD A',','+0x80, 'ADC A',','+0x80, 'SUB',' '+0x80, 'SBC A',','+0x80, 'AND',' '+0x80, 'XOR',' '+0x80, 'OR',' '+0x80, 'CP',' '+0x80
+;cbs_tab:
+	defb	'RL','C'+0x80, 'RR','C'+0x80, 'R','L'+0x80, 'R','R'+0x80, 'SL','A'+0x80, 'SR','A'+0x80, '?'+0x80, 'SR','L'+0x80
+;cc_tab:
+	defb	'N','Z'+0x80, 'Z'+0x80, 'N','C'+0x80, 'C'+0x80, 'N','V'+0x80, 'V'+0x80, 'P'+0x80, 'M'+0x80
+;ddss_tab
+	defb	'B','C'+0x80, 'D','E'+0x80
+reg_hl	defb	'H','L'+0x80, 'S','P'+0x80
+;qq_tab	
+	defb	'B','C'+0x80, 'D','E'+0x80, 'H','L'+0x80, 'A','F'+0x80
+	defb	'B'+0x80,'C'+0x80,'D'+0x80,'E'+0x80,'H'+0x80,'L'+0x80,'?'+0x80,'A'+0x80
+; tokens
+	defb	'L','D'+0x80		; _ld
+	defb	'B','I','T',' '+0x80	; _bit
+	defb	'S','E','T',' '+0x80	; _set
+	defb	'R','E','S',' '+0x80	; _res
+	defb	'L','D',' '+0x80	; _lds
+	defb	'C','P'+0x80		; _cp
+	defb	'I','N','C',' '+0x80	; _incs
+	defb	'D','E','C',' '+0x80	; _decs
+	defb	'P','U','S','H',' '+0x80	; _pushs
+	defb	'P','O','P',' '+0x80	; _pops
+	defb	'R','E','T'+0x80	; _ret
+	defb	'C','A','L','L',' '+0x80	; _calls
+	defb	'I','M',' '+0x80	; _ims
+	defb	'J','R',' '+0x80	; _jrs
+	defb	'J','P',' '+0x80	; _jps
+	defb	'I','N'+0x80		; _in
+	defb	'O','U','T'+0x80	; _out
+	defb	'E','X',' '+0x80	; _exs
+	defb	'I','R'+0x80		; _ir
+	defb	'D','R'+0x80		; _dr
+	defb	',','A'+0x80		; _cA
+	defb	'A',','+0x80		; _cA
 
