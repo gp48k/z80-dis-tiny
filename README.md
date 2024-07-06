@@ -8,7 +8,7 @@ attempts at the smallest Z-80 disassembler.
 The current best is: [peter-1](src/peter-1/0871) at 871 bytes.
 
 To make the variants comperable and have at least a modicum of practicality they all have the
-same interaface and restrictions on operation.  They must:
+same interface and restrictions on operation.  They must:
 
 * Have a subroutine called `z80dis`
 * Disassemble the instruction pointed to by `HL` register.
